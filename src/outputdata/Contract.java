@@ -1,0 +1,65 @@
+package outputdata;
+
+public class Contract {
+
+    private int consumerId;
+    private int price;
+    private int remainedContractMonths;
+
+    public Contract() { }
+
+    public Contract(final int consumerId, final int price, final int remainedContractMonths) {
+        this.consumerId = consumerId;
+        this.price = price;
+        this.remainedContractMonths = remainedContractMonths;
+    }
+
+    public final int getConsumerId() {
+        return consumerId;
+    }
+
+    public final int getPrice() {
+        return price;
+    }
+
+    public final int getRemainedContractMonths() {
+        return remainedContractMonths;
+    }
+
+    public final void setConsumerId(final int consumerId) {
+        this.consumerId = consumerId;
+    }
+
+    public final void setPrice(final int price) {
+        this.price = price;
+    }
+
+    public final void setRemainedContractMonths(final int remainedContractMonths) {
+        this.remainedContractMonths = remainedContractMonths;
+    }
+
+    /**
+     * metoda afisaza datele consumatorilor
+     * cu constracte la distribuitori
+     * @return campurile afisate sunt id-ul consumatorului
+     * pretul contractului si cate luni au ramas din contract
+     */
+    @Override
+    public String toString() {
+        return "Contract{"
+                +
+                "consumerId="
+                +
+                consumerId
+                +
+                ", price="
+                +
+                price
+                +
+                ", remainedContractMonths="
+                +
+                remainedContractMonths
+                +
+                '}';
+    }
+}

@@ -10,14 +10,6 @@ public class InitData {
 
     public InitData() { }
 
-    public InitData(ArrayList<Consumers> consumers,
-                    ArrayList<Distributors> distributors,
-                    ArrayList<Producers> producers) {
-        this.consumers = consumers;
-        this.distributors = distributors;
-        this.producers = producers;
-    }
-
     public final ArrayList<Consumers> getConsumers() {
         return consumers;
     }
@@ -40,24 +32,5 @@ public class InitData {
 
     public final void setProducers(final ArrayList<Producers> producers) {
         this.producers = producers;
-    }
-
-    @Override
-    public String toString() {
-        return "InitData{"
-                +
-                "consumers="
-                +
-                consumers
-                +
-                ", distributors="
-                +
-                distributors
-                +
-                ", producers="
-                +
-                producers
-                +
-                '}';
     }
 }

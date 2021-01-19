@@ -73,10 +73,6 @@ public class DistributorsOutput {
         return isBankrupt;
     }
 
-    public final void setBankrupt(final boolean bankrupt) {
-        isBankrupt = bankrupt;
-    }
-
     public final ArrayList<Contract> getContracts() {
         return contracts;
     }
@@ -85,6 +81,13 @@ public class DistributorsOutput {
         this.contracts = contracts;
     }
 
+    /**
+     * metoda afisaza distribuitorii prelucrati
+     * @return campurile afisate sunt id-ul distribuitorilor,
+     * cantitatea de energie necesara, costul contractului,
+     * strategia de alegere a producatorului , isBankrupt
+     * si contractele ramase la finalul simularii
+     */
     @Override
     public String toString() {
         return "DistributorsOutput{"

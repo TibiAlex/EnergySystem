@@ -43,6 +43,10 @@ public class Output {
         this.energyProducers = energyProducers;
     }
 
+    /**
+     * metoda de afisare a tuturor datelor rezultate in urma simularii
+     * @return se vor returna consumatorii, distribuitorii si producatorii
+     */
     @Override
     public String toString() {
         return "Output{"

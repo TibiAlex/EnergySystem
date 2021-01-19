@@ -2,18 +2,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import inputdata.Producers;
-import inputdata.Consumers;
-import inputdata.Distributors;
+import factory.Factory;
+import factory.FactoryType;
 import inputdata.Input;
 import inputdata.MonthlyUpdate;
+import outputdata.ConsumersOutput;
+import outputdata.DistributorsOutput;
 import outputdata.Output;
 import altereddata.ConsumersAltered;
 import altereddata.DistributorsAltered;
 import altereddata.ProducersAltered;
-import updatedata.CopyInput;
-import updatedata.CopyOutput;
+import outputdata.ProducersOutput;
 import updatedata.SetChanges;
 
 /**
@@ -35,29 +36,25 @@ public final class Main {
         ObjectMapper obMap = new ObjectMapper();
         Input input = obMap.readValue(new File(args[0]), Input.class);
 
-        CopyInput copyInput = new CopyInput();
-        SetChanges setChanges = new SetChanges();
-        CopyOutput copyOutput = new CopyOutput();
-        Method m = new Method();
+        SetChanges setChanges = SetChanges.getInstance();
+        Method m = Method.getInstance();
+        FactoryType factoryType = new FactoryType();
 
-        //arraylist cu distribuitorii, consumatorii si producatorii care urmeaza sa fie editate
-        ArrayList<Distributors> distributors = input.getInitialData().getDistributors();
-        ArrayList<DistributorsAltered> distributorsAltereds = new ArrayList<>();
-        copyInput.copyDistributors(distributors, distributorsAltereds);
+        //Copiem datele de intrare in 3 arraylisturi pentru a fi mai usor de prelucrat
+        Factory dist = factoryType.typeOfVariables("Dist");
+        ArrayList<DistributorsAltered> distributorsAltereds =
+                (ArrayList<DistributorsAltered>) dist.initialise(input);
 
-        ArrayList<Consumers> consumers = input.getInitialData().getConsumers();
-        ArrayList<ConsumersAltered> consumersAltereds = new ArrayList<>();
-        copyInput.copyConsumers(consumersAltereds, consumers);
+        Factory cons  = factoryType.typeOfVariables("Cons");
+        ArrayList<ConsumersAltered> consumersAltereds =
+                (ArrayList<ConsumersAltered>) cons.initialise(input);
 
-        ArrayList<Producers> producers = input.getInitialData().getProducers();
-        ArrayList<ProducersAltered> producersAltereds = new ArrayList<>();
-        copyInput.copyProducers(producers, producersAltereds);
+        Factory prod = factoryType.typeOfVariables("Prod");
+        ArrayList<ProducersAltered> producersAltereds =
+                (ArrayList<ProducersAltered>) prod.initialise(input);
 
         //setarea producatorilor pentru distribuitori in functie de strategie
-        distributorsAltereds.forEach(d -> {
-            d.setEnoughQuantity(0);
-            d.strategy(producersAltereds);
-        });
+        distributorsAltereds.forEach(d -> d.strategy(producersAltereds));
 
         //calcularea indicelui celui mai ieftin contract si calcularea preturilor distribuitorilor
         int indice = m.minimID(distributorsAltereds);
@@ -103,28 +100,18 @@ public final class Main {
             //distributorii platesc
             distributorsAltereds.forEach(DistributorsAltered::calculateBudget);
 
-            // producatorii isi reactualizeaza valorile
-            setChanges.setProducerChanges(producersAltereds, monthlyUpdates, k);
-
             // scoatem distributorii care au dat faliment de la producatori
             for (ProducersAltered producersAltered : producersAltereds) {
-                for (int j = 0; j < producersAltered.getDistrbutorID().size(); j++) {
-                    int value = producersAltered.getDistrbutorID().get(j);
-                    if (distributorsAltereds.get(value).isBankrupt()) {
-                        producersAltered.getDistrbutorID().remove(
-                                distributorsAltereds.get(value).getId());
+                for (int j = 0; j < producersAltered.getDistributors().size(); j++) {
+                    if (producersAltered.getDistributors().get(j).isBankrupt()) {
+                        producersAltered.remove(producersAltered.getDistributors().get(j));
                     }
                 }
             }
 
+            // producatorii isi reactualizeaza valorile
             // scoatem dist de la producatorii care s-au schimbat
-            for (ProducersAltered producersAltered : producersAltereds) {
-                if (producersAltered.schimbat()
-                        && producersAltered.getOldEnergyPerDistributor() != 0) {
-                    producersAltered.schimbare(distributorsAltereds);
-                }
-            }
-
+            setChanges.setProducerChanges(producersAltereds, monthlyUpdates, k);
 
             // le gasim dist un nou producator
             for (DistributorsAltered distributorsAltered : distributorsAltereds) {
@@ -134,7 +121,6 @@ public final class Main {
                 }
             }
 
-
             // updatam distributorii lunari ai producatorilor
             for (ProducersAltered producersAltered : producersAltereds) {
                 producersAltered.setMonthsInfo(k + 1);
@@ -142,21 +128,32 @@ public final class Main {
             producersAltereds.forEach(p -> p.setOldEnergyPerDistributor(0));
 
             // verificam daca jocul mai continua
-            int d = 0;
-            for (DistributorsAltered distributorsAltered : distributorsAltereds) {
-                if (distributorsAltered.isBankrupt()) {
-                    d++;
+            AtomicInteger c = new AtomicInteger();
+            distributorsAltereds.forEach(d -> {
+                if (!d.isBankrupt()) {
+                    c.set(1);
                 }
-            }
-            if (d == distributorsAltereds.size()) {
+            });
+            if (c.get() == 0) {
                 break;
             }
         }
 
+        //Copiem datele din cele 3 arraylist-uri in alte 3 arraylisturi pentru a putea fi afisate
+        Factory consOut = factoryType.typeOfVariables("ConsOut");
+        ArrayList<ConsumersOutput> consumersOutputs =
+                (ArrayList<ConsumersOutput>) consOut.initialise(consumersAltereds);
+
+        Factory distOut = factoryType.typeOfVariables("DistOut");
+        ArrayList<DistributorsOutput> distributorsOutputs =
+                (ArrayList<DistributorsOutput>) distOut.initialise(distributorsAltereds);
+
+        Factory prodOut = factoryType.typeOfVariables("ProdOut");
+        ArrayList<ProducersOutput> producersOutputs =
+                (ArrayList<ProducersOutput>) prodOut.initialise(producersAltereds);
+
         // Output
-        Output output = new Output(copyOutput.copyConsumersOutput(consumersAltereds),
-                copyOutput.copyDistributorsOutput(distributorsAltereds),
-                copyOutput.copyProducersOutput(producersAltereds));
+        Output output = new Output(consumersOutputs, distributorsOutputs, producersOutputs);
         obMap.writerWithDefaultPrettyPrinter().writeValue(new File(args[1]), output);
     }
 }

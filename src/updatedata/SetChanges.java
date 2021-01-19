@@ -10,7 +10,24 @@ import inputdata.ProducerChanges;
 
 import java.util.ArrayList;
 
-public class SetChanges {
+public final class SetChanges {
+
+    private static SetChanges instance = new SetChanges();
+
+    private SetChanges() { }
+
+    /**
+     *metoda pentru a declara instanta singleton
+     * pentru clasa ce se ocupa cu schimbarile lunare
+     * @return se returneaza instanta
+     */
+    public static SetChanges getInstance() {
+        if (instance == null) {
+            instance = new SetChanges();
+        }
+        return instance;
+    }
+
     /**
      * metoda pentru schimbarea datelor lunare la consumatori
      * @param consumersAltereds consumatorii de prelucrat
@@ -66,6 +83,7 @@ public class SetChanges {
                         producersAltereds.get(id).getEnergyPerDistributor());
                 producersAltereds.get(id).setEnergyPerDistributor(
                         producerChange.getEnergyPerDistributor());
+                producersAltereds.get(id).notifyUpdate();
             }
         }
     }

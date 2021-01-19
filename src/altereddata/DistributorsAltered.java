@@ -1,10 +1,15 @@
 package altereddata;
 
+import observer.IObserver;
 import strategies.EnergyChoiceStrategyType;
+import strategy.Context;
+import strategy.StrategyGreen;
+import strategy.StrategyPrice;
+import strategy.StrategyQuantity;
 
 import java.util.ArrayList;
 
-public class DistributorsAltered {
+public class DistributorsAltered implements IObserver {
 
     private int id;
     private int contractLength;
@@ -12,12 +17,14 @@ public class DistributorsAltered {
     private int initialInfrastructureCost;
     private int energyNeededKW;
     private EnergyChoiceStrategyType producerStrategy;
-    private double productionCost;
+    private long costProducator;
     private int enoughQuantity;
+    private double productionCost;
     private int contractPrice;
+    private final double constanta = 0.2;
+    private final int zece = 10;
     private ArrayList<ConsumersAltered> consumers;
     private boolean isBankrupt;
-    private long costProducator;
 
     public DistributorsAltered() { }
 
@@ -87,20 +94,8 @@ public class DistributorsAltered {
         this.producerStrategy = producerStrategy;
     }
 
-    public final double getProductionCost() {
-        return productionCost;
-    }
-
-    public final void setProductionCost(final double productionCost) {
-        this.productionCost = productionCost;
-    }
-
     public final int getContractPrice() {
         return contractPrice;
-    }
-
-    public final void setContractPrice(final int contractPrice) {
-        this.contractPrice = contractPrice;
     }
 
     public final ArrayList<ConsumersAltered> getConsumers() {
@@ -115,79 +110,8 @@ public class DistributorsAltered {
         return isBankrupt;
     }
 
-    public final void setBankrupt(final boolean bankrupt) {
-        isBankrupt = bankrupt;
-    }
-
     public final int getEnoughQuantity() {
         return enoughQuantity;
-    }
-
-    public final void setEnoughQuantity(final int enoughQuantity) {
-        this.enoughQuantity = enoughQuantity;
-    }
-
-    public final long getCostProducator() {
-        return costProducator;
-    }
-
-    public final void setCostProducator(final long costProducator) {
-        this.costProducator = costProducator;
-    }
-
-    @Override
-    public String toString() {
-        return "DistributorsAltered{"
-                +
-                "id="
-                +
-                id
-                +
-                ", contractLength="
-                +
-                contractLength
-                +
-                ", initialBudget="
-                +
-                initialBudget
-                +
-                ", initialInfrastructureCost="
-                +
-                initialInfrastructureCost
-                +
-                ", energyNeededKW="
-                +
-                energyNeededKW
-                +
-                ", producerStrategy="
-                +
-                producerStrategy
-                +
-                ", productionCost="
-                +
-                productionCost
-                +
-                ", enoughQuantity="
-                +
-                enoughQuantity
-                +
-                ", contractPrice="
-                +
-                contractPrice
-                +
-                ", consumers="
-                +
-                consumers
-                +
-                ", isBankrupt="
-                +
-                isBankrupt
-                +
-                ", costProducator="
-                +
-                costProducator
-                +
-                '}';
     }
 
     /**
@@ -196,26 +120,19 @@ public class DistributorsAltered {
      */
     public void strategy(ArrayList<ProducersAltered> producersAltereds) {
         if (producerStrategy.equals(EnergyChoiceStrategyType.GREEN)) {
-            strategyGreen(producersAltereds);
+            Context context = new Context(new StrategyGreen());
+            context.executeStrategy(this, producersAltereds);
         }
 
         if (producerStrategy.equals(EnergyChoiceStrategyType.PRICE)) {
-            strategyPrice(producersAltereds);
+            Context context = new Context(new StrategyPrice());
+            context.executeStrategy(this, producersAltereds);
         }
 
         if (producerStrategy.equals(EnergyChoiceStrategyType.QUANTITY)) {
-            strategyQuantiy(producersAltereds);
+            Context context = new Context(new StrategyQuantity());
+            context.executeStrategy(this, producersAltereds);
         }
-    }
-
-    /**
-     * metoda ce scade din energia primita
-     * energia unui prod schimbat
-     * @param value valoarea primita de la prod respectiv
-     */
-    public void scadere(int value, double price) {
-        enoughQuantity -= value;
-        productionCost -= value * price;
     }
 
     /**
@@ -244,7 +161,6 @@ public class DistributorsAltered {
      * contractului pentru consumator
      */
     public void calculareContractCost() {
-        double constanta = 0.2;
         long profit = Math.round(Math.floor(constanta * costProducator));
         if (consumers.size() == 0) {
             contractPrice = (int) (initialInfrastructureCost + costProducator + profit);
@@ -259,106 +175,8 @@ public class DistributorsAltered {
      * un distribuitor dupa ce acesta isi alege producatorii
      */
     public void calculareProdCost() {
-        costProducator = Math.round(Math.floor(productionCost / 10));
+        costProducator = Math.round(Math.floor(productionCost / zece));
 
-    }
-
-    /**
-     * metoda pentru a calcula producatorii pentru
-     * un distribuitor cu strategia Green
-     * @param producersAltereds arraylist cu producatorii
-     */
-    public void strategyGreen(ArrayList<ProducersAltered> producersAltereds) {
-        while (compare()) {
-            double minPrice = 110000;
-            int indice = 0;
-            int maxQuantity = 0;
-            for (int i = 0; i < producersAltereds.size(); i++) {
-                if (producersAltereds.get(i).getMaxDistributors()
-                        > producersAltereds.get(i).getDistrbutorID().size()) {
-                    if (!producersAltereds.get(i).containsDistributor(id)) {
-                        if (producersAltereds.get(i).getEnergyType().isRenewable()) {
-                            if (producersAltereds.get(i).calculateCost() < minPrice) {
-                                indice = i;
-                                minPrice = producersAltereds.get(i).calculateCost();
-                                maxQuantity = producersAltereds.get(i).
-                                        getEnergyPerDistributor();
-                            }
-                            if (producersAltereds.get(i).calculateCost() == minPrice) {
-                                if (maxQuantity < producersAltereds.get(i).
-                                        getEnergyPerDistributor()) {
-                                    indice = i;
-                                    maxQuantity = producersAltereds.get(i).
-                                            getEnergyPerDistributor();
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            if (minPrice != 110000) {
-                addEnergy(producersAltereds.get(indice).getEnergyPerDistributor());
-                addPrice(producersAltereds.get(indice).calculateCost());
-                producersAltereds.get(indice).getDistrbutorID().add(id);
-            } else {
-                strategyPrice(producersAltereds);
-            }
-        }
-    }
-
-    /**
-     * metoda pentru a calcula producatorii pentru
-     * un distribuitor cu strategia Price
-     * @param producersAltereds arraylist cu producatorii
-     */
-    public void strategyPrice(ArrayList<ProducersAltered> producersAltereds) {
-        while (compare()) {
-            double min = 1000;
-            int indice = 0;
-            for (int j = 0; j < producersAltereds.size(); j++) {
-                if (producersAltereds.get(j).getMaxDistributors()
-                        > producersAltereds.get(j).getDistrbutorID().size()) {
-                    if (!producersAltereds.get(j).containsDistributor(id)) {
-                        if (producersAltereds.get(j).getPriceKW() < min) {
-                            min = producersAltereds.get(j).getPriceKW();
-                            indice = j;
-                        }
-                    }
-                }
-            }
-            addEnergy(producersAltereds.get(indice).getEnergyPerDistributor());
-            addPrice(producersAltereds.get(indice).calculateCost());
-            producersAltereds.get(indice).getDistrbutorID().add(id);
-        }
-        if (compare()) {
-            strategyQuantiy(producersAltereds);
-        }
-    }
-
-    /**
-     * metoda ce calculeaza producatorii pentru un distribuitor
-     * cu strategia Quantity
-     * @param producersAltereds arraylist cu toti producatorii
-     */
-    public void strategyQuantiy(ArrayList<ProducersAltered> producersAltereds) {
-        while (compare()) {
-            int max = 0;
-            int indice = 0;
-            for (int j = 0; j < producersAltereds.size(); j++) {
-                if (producersAltereds.get(j).getMaxDistributors()
-                        > producersAltereds.get(j).getDistrbutorID().size()) {
-                    if (!producersAltereds.get(j).containsDistributor(id)) {
-                        if (max < producersAltereds.get(j).getEnergyPerDistributor()) {
-                            max = producersAltereds.get(j).getEnergyPerDistributor();
-                            indice = j;
-                        }
-                    }
-                }
-            }
-            addEnergy(producersAltereds.get(indice).getEnergyPerDistributor());
-            addPrice(producersAltereds.get(indice).calculateCost());
-            producersAltereds.get(indice).getDistrbutorID().add(id);
-        }
     }
 
     /**
@@ -384,5 +202,17 @@ public class DistributorsAltered {
      */
     public void addEnergy(int value) {
         enoughQuantity += value;
+    }
+
+    /**
+     * metoda updateaza nevoia de enegie
+     * in functie de schimbarile din luna respectiva
+     * @param old cantitatea de energie veche
+     * @param price pretul
+     */
+    @Override
+    public void update(int old, double price) {
+        enoughQuantity -= old;
+        productionCost -= old * price;
     }
 }

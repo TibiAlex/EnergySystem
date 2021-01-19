@@ -1,10 +1,11 @@
 package altereddata;
 
 import entities.EnergyType;
+import observer.IObservable;
 
 import java.util.ArrayList;
 
-public class ProducersAltered {
+public class ProducersAltered implements IObservable {
 
     private int id;
     private EnergyType energyType;
@@ -12,7 +13,7 @@ public class ProducersAltered {
     private double priceKW;
     private int energyPerDistributor;
     private ArrayList<MonthlyStats> monthlyStats;
-    private ArrayList<Integer> distrbutorID;
+    private ArrayList<DistributorsAltered> distributors;
     private int oldEnergyPerDistributor;
 
     public ProducersAltered() { }
@@ -26,7 +27,7 @@ public class ProducersAltered {
         this.energyPerDistributor = energyPerDistributor;
         this.oldEnergyPerDistributor = 0;
         this.monthlyStats = new ArrayList<>();
-        this.distrbutorID = new ArrayList<>();
+        this.distributors = new ArrayList<>();
     }
 
     public final int getId() {
@@ -77,81 +78,16 @@ public class ProducersAltered {
         this.monthlyStats = monthlyStats;
     }
 
-    public final ArrayList<Integer> getDistrbutorID() {
-        return distrbutorID;
-    }
-
-    public final void setDistrbutorID(final ArrayList<Integer> distrbutorID) {
-        this.distrbutorID = distrbutorID;
-    }
-
-    public final int getOldEnergyPerDistributor() {
-        return oldEnergyPerDistributor;
-    }
-
     public final void setOldEnergyPerDistributor(final int oldEnergyPerDistributor) {
         this.oldEnergyPerDistributor = oldEnergyPerDistributor;
     }
 
-    @Override
-    public String toString() {
-        return "ProducersAltered{"
-                +
-                "id="
-                +
-                id
-                +
-                ", energyType="
-                +
-                energyType
-                +
-                ", maxDistributors="
-                +
-                maxDistributors
-                +
-                ", priceKW="
-                +
-                priceKW
-                +
-                ", energyPerDistributor="
-                +
-                energyPerDistributor
-                +
-                ", monthlyStats="
-                +
-                monthlyStats
-                +
-                ", distrbutorID="
-                +
-                distrbutorID
-                +
-                ", oldEnergyPerDistributor="
-                +
-                oldEnergyPerDistributor
-                +
-                '}';
+    public final ArrayList<DistributorsAltered> getDistributors() {
+        return distributors;
     }
 
-    /**
-     * metoda ce scoate distribuitorii de la un prod
-     * daca au loc schimbari la acesta din urma
-     * @param distributorsAltereds arraylist cu toti dist
-     */
-    public void schimbare(ArrayList<DistributorsAltered> distributorsAltereds) {
-        for (DistributorsAltered distributorsAltered : distributorsAltereds) {
-            if (distrbutorID.contains(distributorsAltered.getId())) {
-                distributorsAltered.scadere(oldEnergyPerDistributor, priceKW);
-            }
-        }
-        distrbutorID.clear();
-    }
-
-    /**
-     * metoda
-     * @return returneaza daca au avut loc schimbari
-     */
-    public boolean schimbat() {
-        return oldEnergyPerDistributor != energyPerDistributor;
+    public final void setDistributors(final ArrayList<DistributorsAltered> distributors) {
+        this.distributors = distributors;
     }
 
     /**
@@ -161,8 +97,8 @@ public class ProducersAltered {
      * @return returneaza daca distributorul se gaseste printre
      * clientii producatorului
      */
-    public boolean containsDistributor(int d) {
-        return distrbutorID.contains(d);
+    public boolean containsDistributor(DistributorsAltered d) {
+        return distributors.contains(d);
     }
 
     /**
@@ -172,7 +108,10 @@ public class ProducersAltered {
      * @param value numarul lunii in care se afla simularea
      */
     public void setMonthsInfo(int value) {
-        ArrayList<Integer> d = new ArrayList<>(distrbutorID);
+        ArrayList<Integer> d = new ArrayList<>();
+        for (DistributorsAltered distributor : distributors) {
+            d.add(distributor.getId());
+        }
         MonthlyStats m = new MonthlyStats(value, d);
         monthlyStats.add(m);
     }
@@ -183,5 +122,38 @@ public class ProducersAltered {
      */
     public double calculateCost() {
         return energyPerDistributor * priceKW;
+    }
+
+    /**
+     * metoda adauga un distributor ca si client
+     * al producatorului
+     * @param d distributorul de adaugat
+     */
+    @Override
+    public void add(DistributorsAltered d) {
+          distributors.add(d);
+    }
+
+    /**
+     * metoda scoate un client de la producator
+     * @param d distributorul de scos
+     */
+    @Override
+    public void remove(DistributorsAltered d) {
+        distributors.remove(d);
+    }
+
+    /**
+     * metoda anunta toti distributorii ca producatorul
+     * si-a schimbat cantitatea de energie
+     * pentru ca acestia sa faca schimbarile necesare
+     * si apoi ii scoate pe toti din lista
+     */
+    @Override
+    public void notifyUpdate() {
+        for (DistributorsAltered distributor : distributors) {
+            distributor.update(oldEnergyPerDistributor, priceKW);
+        }
+        distributors.clear();
     }
 }

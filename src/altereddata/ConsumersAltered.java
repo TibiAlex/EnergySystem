@@ -6,12 +6,13 @@ public class ConsumersAltered {
     private int initialBudget;
     private int monthlyIncome;
     private DistributorsAltered actualDistributor;
-    private DistributorsAltered oldDistribuitor;
     private int actualDistributorPrice;
+    private DistributorsAltered oldDistribuitor;
     private int oldDistribuitorPrice;
     private int monthsLeft;
-    private boolean isBankrupt;
     private boolean isRestantier;
+    private final double constanta = 1.2;
+    private boolean isBankrupt;
 
     public ConsumersAltered() { }
 
@@ -20,12 +21,12 @@ public class ConsumersAltered {
         this.initialBudget = initialBudget;
         this.monthlyIncome = monthlyIncome;
         this.actualDistributor = null;
-        this.oldDistribuitor = null;
         this.actualDistributorPrice = 0;
+        this.oldDistribuitor = null;
         this.oldDistribuitorPrice = 0;
         this.monthsLeft = 0;
-        this.isBankrupt = false;
         this.isRestantier = false;
+        this.isBankrupt = false;
     }
 
     public final int getId() {
@@ -56,99 +57,16 @@ public class ConsumersAltered {
         return actualDistributor;
     }
 
-    public final void setActualDistributor(final DistributorsAltered actualDistributor) {
-        this.actualDistributor = actualDistributor;
-    }
-
-    public final DistributorsAltered getOldDistribuitor() {
-        return oldDistribuitor;
-    }
-
-    public final void setOldDistribuitor(final DistributorsAltered oldDistribuitor) {
-        this.oldDistribuitor = oldDistribuitor;
-    }
-
     public final int getActualDistributorPrice() {
         return actualDistributorPrice;
-    }
-
-    public final void setActualDistributorPrice(final int actualDistributorPrice) {
-        this.actualDistributorPrice = actualDistributorPrice;
-    }
-
-    public final int getOldDistribuitorPrice() {
-        return oldDistribuitorPrice;
-    }
-
-    public final void setOldDistribuitorPrice(final int oldDistribuitorPrice) {
-        this.oldDistribuitorPrice = oldDistribuitorPrice;
     }
 
     public final int getMonthsLeft() {
         return monthsLeft;
     }
 
-    public final void setMonthsLeft(final int monthsLeft) {
-        this.monthsLeft = monthsLeft;
-    }
-
     public final boolean isBankrupt() {
         return isBankrupt;
-    }
-
-    public final void setBankrupt(final boolean bankrupt) {
-        isBankrupt = bankrupt;
-    }
-
-    public final boolean isRestantier() {
-        return isRestantier;
-    }
-
-    public final void setRestantier(final boolean restantier) {
-        isRestantier = restantier;
-    }
-
-    @Override
-    public String toString() {
-        return "ConsumersAltered{"
-                +
-                "id="
-                +
-                id
-                +
-                ", initialBudget="
-                +
-                initialBudget
-                +
-                ", monthlyIncome="
-                +
-                monthlyIncome
-                +
-                ", actualDistributor="
-                +
-                actualDistributor.getId()
-                +
-                ", actualDistributorPrice="
-                +
-                actualDistributorPrice
-                +
-                ", oldDistribuitorPrice="
-                +
-                oldDistribuitorPrice
-                +
-                ", monthsLeft="
-                +
-                monthsLeft
-                +
-                ", isBankrupt="
-                +
-                isBankrupt
-                +
-                ", isRestantier="
-                +
-                isRestantier
-                +
-                '}';
     }
 
     /**
@@ -247,7 +165,7 @@ public class ConsumersAltered {
      * consumatorul este restantier
      */
     public void isRestantieR() {
-        int penance = (int) Math.round(Math.floor(1.2 * oldDistribuitorPrice));
+        int penance = (int) Math.round(Math.floor(constanta * oldDistribuitorPrice));
         if (actualDistributor.equals(oldDistribuitor)) {
             sameDistributor(penance);
         } else {

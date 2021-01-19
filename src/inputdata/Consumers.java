@@ -6,14 +6,6 @@ public class Consumers {
     private int initialBudget;
     private int monthlyIncome;
 
-    public Consumers() { }
-
-    public Consumers(final int id, final int initialBudget, final int monthlyIncome) {
-        this.id = id;
-        this.initialBudget = initialBudget;
-        this.monthlyIncome = monthlyIncome;
-    }
-
     public final int getId() {
         return id;
     }
@@ -36,24 +28,5 @@ public class Consumers {
 
     public final void setMonthlyIncome(final int monthlyIncome) {
         this.monthlyIncome = monthlyIncome;
-    }
-
-    @Override
-    public String toString() {
-        return "Consumers{"
-                +
-                "id="
-                +
-                id
-                +
-                ", initialBudget="
-                +
-                initialBudget
-                +
-                ", monthlyIncome="
-                +
-                monthlyIncome
-                +
-                '}';
     }
 }

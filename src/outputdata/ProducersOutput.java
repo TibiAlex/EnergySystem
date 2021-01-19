@@ -76,6 +76,12 @@ public class ProducersOutput {
         this.monthlyStats = monthlyStats;
     }
 
+    /**
+     * metoda afisaza producatorii in urma simularii
+     * @return se vor returna campurile id, numarul maxim de distribuitori
+     * ce pot cumpara energie de la producator, pret, tipul de energie,
+     * cata energie poate trimite la un distribuitor si distribuitorii clientii in fiecare luna
+     */
     @Override
     public String toString() {
         return "ProducersOutput{"

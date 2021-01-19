@@ -8,15 +8,6 @@ public class Input {
     private InitData initialData = new InitData();
     private ArrayList<MonthlyUpdate> monthlyUpdates = new ArrayList<>();
 
-    public Input() { }
-
-    public Input(final int numberOfTurns, final InitData initialData,
-                 final ArrayList<MonthlyUpdate> monthlyUpdates) {
-        this.numberOfTurns = numberOfTurns;
-        this.initialData = initialData;
-        this.monthlyUpdates = monthlyUpdates;
-    }
-
     public final int getNumberOfTurns() {
         return numberOfTurns;
     }
@@ -39,24 +30,5 @@ public class Input {
 
     public final void setMonthlyUpdates(final ArrayList<MonthlyUpdate> monthlyUpdates) {
         this.monthlyUpdates = monthlyUpdates;
-    }
-
-    @Override
-    public String toString() {
-        return "Input{"
-                +
-                "numberOfTurns="
-                +
-                numberOfTurns
-                +
-                ", initialData="
-                +
-                initialData
-                +
-                ", monthlyUpdates="
-                +
-                monthlyUpdates
-                +
-                '}';
     }
 }

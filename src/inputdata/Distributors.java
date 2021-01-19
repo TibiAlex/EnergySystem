@@ -11,19 +11,6 @@ public class Distributors {
     private int energyNeededKW;
     private EnergyChoiceStrategyType producerStrategy;
 
-    public Distributors() { }
-
-    public Distributors(final int id, final int contractLength, final int initialBudget,
-                        final int initialInfrastructureCost, final int energyNeededKW,
-                        final EnergyChoiceStrategyType producerStrategy) {
-        this.id = id;
-        this.contractLength = contractLength;
-        this.initialBudget = initialBudget;
-        this.initialInfrastructureCost = initialInfrastructureCost;
-        this.energyNeededKW = energyNeededKW;
-        this.producerStrategy = producerStrategy;
-    }
-
     public final int getId() {
         return id;
     }
@@ -70,36 +57,5 @@ public class Distributors {
 
     public final void setProducerStrategy(final EnergyChoiceStrategyType producerStrategy) {
         this.producerStrategy = producerStrategy;
-    }
-
-    @Override
-    public String toString() {
-        return "Distributors{"
-                +
-                "id="
-                +
-                id
-                +
-                ", contractLength="
-                +
-                contractLength
-                +
-                ", initialBudget="
-                +
-                initialBudget
-                +
-                ", initialInfrastructureCost="
-                +
-                initialInfrastructureCost
-                +
-                ", energyNedeedKW="
-                +
-                energyNeededKW
-                +
-                ", type="
-                +
-                producerStrategy
-                +
-                '}';
     }
 }

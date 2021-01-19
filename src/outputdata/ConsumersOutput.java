@@ -26,10 +26,6 @@ public class ConsumersOutput {
         return isBankrupt;
     }
 
-    public final void setBankrupt(final boolean bankrupt) {
-        isBankrupt = bankrupt;
-    }
-
     public final int getBudget() {
         return budget;
     }
@@ -38,6 +34,10 @@ public class ConsumersOutput {
         this.budget = budget;
     }
 
+    /**
+     * metoda pentru a afisa consumatorii prelucrati
+     * @return se returneaza campurile id, isBankrupt si budget pentru fiecare consumator
+     */
     @Override
     public String toString() {
         return "ConsumersOutput{"

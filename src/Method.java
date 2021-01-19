@@ -2,7 +2,26 @@ import altereddata.DistributorsAltered;
 
 import java.util.ArrayList;
 
-public class Method {
+public final class Method {
+
+    private final int minim = 1000;
+
+    private static Method instance;
+
+    private Method() { }
+
+    /**
+     * metoda ce instantiaza singleton
+     * pentru clasa in care se afla metoda
+     * ce calculeaza cel mai ieftin contract
+     * @return se returneaza instanta
+     */
+    public static Method getInstance() {
+        if (instance == null) {
+            instance = new Method();
+        }
+        return instance;
+    }
 
     /**
      * metoda ce calculeaza costul de productie pt fiecare distribuitor
@@ -12,7 +31,7 @@ public class Method {
      * @return returneaza indicele celui mai ieftin contract
      */
     public int minimID(ArrayList<DistributorsAltered> distributorsAltereds) {
-        int min = 1000;
+        int min = minim;
         int indice = 0;
         for (DistributorsAltered distributorsAltered : distributorsAltereds) {
             if (!distributorsAltered.isBankrupt()) {

@@ -10,17 +10,6 @@ public class Producers {
     private double priceKW;
     private int energyPerDistributor;
 
-    public Producers() { }
-
-    public Producers(final int id, final EnergyType energyType, final int maxDistributors,
-                     final double priceKW, final int energyPerDistributor) {
-        this.id = id;
-        this.energyType = energyType;
-        this.maxDistributors = maxDistributors;
-        this.priceKW = priceKW;
-        this.energyPerDistributor = energyPerDistributor;
-    }
-
     public final int getId() {
         return id;
     }
@@ -59,32 +48,5 @@ public class Producers {
 
     public final void setEnergyPerDistributor(final int energyPerDistributor) {
         this.energyPerDistributor = energyPerDistributor;
-    }
-
-    @Override
-    public String toString() {
-        return "Producers{"
-                +
-                "id="
-                +
-                id
-                +
-                ", type="
-                +
-                energyType
-                +
-                ", maxDistributors="
-                +
-                maxDistributors
-                +
-                ", priceKW="
-                +
-                priceKW
-                +
-                ", energyPerDistributor="
-                +
-                energyPerDistributor
-                +
-                '}';
     }
 }

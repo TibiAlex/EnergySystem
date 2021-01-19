@@ -7,9 +7,7 @@ public class MonthlyStats {
     private int month;
     private ArrayList<Integer> distributorsIds;
 
-    public MonthlyStats() { }
-
-    public MonthlyStats(final int month, final ArrayList distrbutordID) {
+    public MonthlyStats(final int month, final ArrayList<Integer> distrbutordID) {
         this.month = month;
         this.distributorsIds = distrbutordID;
     }
@@ -28,20 +26,5 @@ public class MonthlyStats {
 
     public final void setDistributorsIds(final ArrayList<Integer> distributorsIds) {
         this.distributorsIds = distributorsIds;
-    }
-
-    @Override
-    public String toString() {
-        return "MonthlyStats{"
-                +
-                "month="
-                +
-                month
-                +
-                ", distributorsID="
-                +
-                distributorsIds
-                +
-                '}';
     }
 }

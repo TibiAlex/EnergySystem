@@ -38,6 +38,12 @@ public class Contract {
         this.remainedContractMonths = remainedContractMonths;
     }
 
+    /**
+     * metoda afisaza datele consumatorilor
+     * cu constracte la distribuitori
+     * @return campurile afisate sunt id-ul consumatorului
+     * pretul contractului si cate luni au ramas din contract
+     */
     @Override
     public String toString() {
         return "Contract{"
@@ -46,7 +52,9 @@ public class Contract {
                 +
                 consumerId
                 +
-                ", price=" + price
+                ", price="
+                +
+                price
                 +
                 ", remainedContractMonths="
                 +

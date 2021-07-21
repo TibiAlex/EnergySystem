@@ -1,2 +1,2 @@
 # EnergySystem
-Rețeaua de curent electric a unei țări este un sistem complex, format din producători, distribuitori, consumatori (casnici sau industriali) și instituții ale statului care reglementează și supraveghează buna funcționare a sistemului. 
+An OOP project that simulates the energy system of a town with producers, distributors and consumers.The project is basically a game that ends when all the consumers can't pay for the electricity, which means that they failed to choose the best distributor, for their plan.
